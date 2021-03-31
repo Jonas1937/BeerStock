@@ -3,7 +3,6 @@ package com.jonas.testebeer.controller;
 import com.jonas.testebeer.entity.Beer;
 import com.jonas.testebeer.enums.BeerType;
 import com.jonas.testebeer.exceptions.BeerNotFoundException;
-import com.jonas.testebeer.repository.BeerRepository;
 import com.jonas.testebeer.services.BeerServices;
 import com.jonas.testebeer.utils.ToJsonConverter;
 
@@ -12,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
@@ -58,7 +56,7 @@ public class testBeerController {
                 Beer defaultModelBeer = new Beer(1L, "Brahma", "Ambev", 50, 100, BeerType.LAGER);
 
                 // when
-                Mockito.when(beerServices.saveBeerOnDatabase(defaultModelBeer)).thenReturn(defaultModelBeer);
+                when(beerServices.saveBeerOnDatabase(defaultModelBeer)).thenReturn(defaultModelBeer);
 
                 this.mockMvc.perform(post("/").contentType(MediaType.APPLICATION_JSON)
                                 .content(ToJsonConverter.asJsonString(defaultModelBeer)))
@@ -86,7 +84,7 @@ public class testBeerController {
                 Beer defaultModelBeer = new Beer(1L, "Brahma", "Ambev", 50, 100, BeerType.LAGER);
 
                 // when
-                Mockito.when(beerServices.searchBeerFromName(defaultModelBeer.getName()))
+                when(beerServices.searchBeerFromName(defaultModelBeer.getName()))
                                 .thenReturn(Optional.of(defaultModelBeer));
 
                 // then
@@ -102,7 +100,7 @@ public class testBeerController {
                 Beer defaultModelBeer = new Beer(1L, "Brahma", "Ambev", 50, 100, BeerType.LAGER);
 
                 // when
-                Mockito.when(beerServices.searchBeerFromName(defaultModelBeer.getName()))
+                when(beerServices.searchBeerFromName(defaultModelBeer.getName()))
                                 .thenThrow(BeerNotFoundException.class);
 
                 // then
@@ -115,14 +113,12 @@ public class testBeerController {
                 // given
                 Beer defaultModelBeer = new Beer(1L, "Brahma", "Ambev", 50, 100, BeerType.LAGER);
 
-                //when
-                Mockito.when(beerServices.findAll())
-                        .thenReturn(Collections.singletonList(defaultModelBeer));
+                // when
+                when(beerServices.findAll()).thenReturn(Collections.singletonList(defaultModelBeer));
 
-                //then
-                mockMvc.perform(get("/").contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isOk())
-                        .andExpect(jsonPath("$[0].name", is(defaultModelBeer.getName())));
+                // then
+                mockMvc.perform(get("/").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+                                .andExpect(jsonPath("$[0].name", is(defaultModelBeer.getName())));
         }
 
         @Test
@@ -130,25 +126,23 @@ public class testBeerController {
                 // given
                 Beer defaultModelBeer = new Beer(1L, "Brahma", "Ambev", 50, 100, BeerType.LAGER);
 
-                //when
+                // when
                 doNothing().when(beerServices).deleteBeerById(defaultModelBeer.getId());
 
-                //then
-                mockMvc.perform(delete("/delete/" + defaultModelBeer.getId())
-                        .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isOk());
+                // then
+                mockMvc.perform(delete("/delete/" + defaultModelBeer.getId()).contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(status().isOk());
         }
 
         @Test
         public void testDeleteBeerByIdFailed() throws Exception {
 
-                //when
+                // when
                 doThrow(BeerNotFoundException.class).when(beerServices).deleteBeerById(-1);
 
-                //then
-                mockMvc.perform(delete("/delete/" + "-1")
-                        .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isNotFound());
+                // then
+                mockMvc.perform(delete("/delete/" + "-1").contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(status().isNotFound());
         }
 
 }

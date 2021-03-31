@@ -125,7 +125,8 @@ public class Beer {
         return true;
     }
 
-    public Beer(String name, String brand, int quantity, int max, BeerType type) {
+    public Beer(Long id,String name, String brand, int quantity, int max, BeerType type) {
+        this.id=id;
         this.name = name;
         this.brand = brand;
         this.quantity = quantity;
