@@ -2,6 +2,7 @@ package com.jonas.testebeer.controller;
 
 import com.jonas.testebeer.entity.Beer;
 import com.jonas.testebeer.enums.BeerType;
+import com.jonas.testebeer.exceptions.BeerMaxQuantityException;
 import com.jonas.testebeer.exceptions.BeerNotFoundException;
 import com.jonas.testebeer.services.BeerServices;
 import com.jonas.testebeer.utils.ToJsonConverter;
@@ -143,6 +144,24 @@ public class testBeerController {
                 // then
                 mockMvc.perform(delete("/delete/" + "-1").contentType(MediaType.APPLICATION_JSON))
                                 .andExpect(status().isNotFound());
+        }
+
+        @Test
+        public void whenIncrementQuantityOfBeer() throws Exception {
+                // given
+                Beer defaultModelBeer = new Beer(1L, "Brahma", "Ambev", 50, 100, BeerType.LAGER);
+                int incrementQuantity = 15;
+                Beer beerIncremented = new Beer(1L, "Brahma", "Ambev", 65, 100, BeerType.LAGER);
+
+                //when
+                when(beerServices.increment(defaultModelBeer.getId(), incrementQuantity)).thenReturn(beerIncremented);
+
+
+                //then
+                mockMvc.perform(put("/"+ defaultModelBeer.getId() + "/" + incrementQuantity)
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.quantity", is(beerIncremented.getQuantity())));
         }
 
 }

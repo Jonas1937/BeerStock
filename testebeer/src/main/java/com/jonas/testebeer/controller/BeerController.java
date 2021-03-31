@@ -7,6 +7,7 @@ import javax.validation.Valid;
 
 import com.jonas.testebeer.entity.Beer;
 import com.jonas.testebeer.exceptions.BeerAlreadyInDatabaseException;
+import com.jonas.testebeer.exceptions.BeerMaxQuantityException;
 import com.jonas.testebeer.exceptions.BeerNotFoundException;
 import com.jonas.testebeer.services.BeerServices;
 
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,6 +49,17 @@ public class BeerController {
     public String deleteBeerById(@PathVariable int id) throws BeerNotFoundException{
         beerServices.deleteBeerById(id);
         return "Beer sucessfull deleted";
+    }
+
+    @PutMapping("/{id}/{quantity}")
+    public Beer incrementQuantityForABeer(@PathVariable Long id, @PathVariable int quantity) throws BeerNotFoundException, BeerMaxQuantityException{
+        return beerServices.increment(id, quantity);
+    }
+
+    @PutMapping("/dec/{id}/{quantity}")
+    public Beer decrementQuantityForABeer(@PathVariable Long id, @PathVariable int quantity) throws BeerNotFoundException, BeerMaxQuantityException{
+
+        return beerServices.decrement(id, quantity);
     }
 
 
