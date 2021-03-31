@@ -9,5 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface BeerRepository extends JpaRepository<Beer, String> {
     
     Optional<Beer> findByName(String name);
+    Optional<Beer> findById(long id);
+
+    void deleteById(long id);
 
 }

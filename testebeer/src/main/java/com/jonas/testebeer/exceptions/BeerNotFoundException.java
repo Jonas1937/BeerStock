@@ -11,5 +11,9 @@ public class BeerNotFoundException extends Exception{
     public BeerNotFoundException(String name) {
         super(String.format("Beer %s not found in the system", name));
     }   
+
+    public BeerNotFoundException(Long id) {
+        super(String.format("Beer %s not found in the system", id));
+    }  
     
 }

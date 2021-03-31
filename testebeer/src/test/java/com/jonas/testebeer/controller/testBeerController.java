@@ -28,6 +28,9 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
@@ -108,7 +111,7 @@ public class testBeerController {
         }
 
         @Test
-        public void testFindAllOnDatabase() {
+        public void testFindAllOnDatabase() throws Exception {
                 // given
                 Beer defaultModelBeer = new Beer(1L, "Brahma", "Ambev", 50, 100, BeerType.LAGER);
 
@@ -117,7 +120,35 @@ public class testBeerController {
                         .thenReturn(Collections.singletonList(defaultModelBeer));
 
                 //then
-                
+                mockMvc.perform(get("/").contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$[0].name", is(defaultModelBeer.getName())));
+        }
+
+        @Test
+        public void testDeleteBeerByIdSucess() throws Exception {
+                // given
+                Beer defaultModelBeer = new Beer(1L, "Brahma", "Ambev", 50, 100, BeerType.LAGER);
+
+                //when
+                doNothing().when(beerServices).deleteBeerById(defaultModelBeer.getId());
+
+                //then
+                mockMvc.perform(delete("/delete/" + defaultModelBeer.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk());
+        }
+
+        @Test
+        public void testDeleteBeerByIdFailed() throws Exception {
+
+                //when
+                doThrow(BeerNotFoundException.class).when(beerServices).deleteBeerById(-1);
+
+                //then
+                mockMvc.perform(delete("/delete/" + "-1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isNotFound());
         }
 
 }

@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class BeerServices {
- 
+
     @Autowired
     private BeerRepository beerRepository;
 
@@ -29,24 +29,34 @@ public class BeerServices {
         return beer;
     }
 
-    public void checkIfExistsABeerInDatabase(Beer beer) throws BeerAlreadyInDatabaseException{
+    public List<Beer> findAll() {
+        return beerRepository.findAll().stream().collect(Collectors.toList());
+    }
+
+    public void deleteBeerById(long id) throws BeerNotFoundException {
+        checkIfExistsABeerById(id);
+        beerRepository.deleteById(id);
+    }
+
+    public void checkIfExistsABeerInDatabase(Beer beer) throws BeerAlreadyInDatabaseException {
         Optional<Beer> findByName = beerRepository.findByName(beer.getName());
-        if (!findByName.isEmpty()){
+        if (!findByName.isEmpty()) {
             throw new BeerAlreadyInDatabaseException();
         }
     }
 
-    public Optional<Beer> searchBeerFromName(String name) throws BeerNotFoundException{
+    public Optional<Beer> searchBeerFromName(String name) throws BeerNotFoundException {
         Optional<Beer> searchedBeer = beerRepository.findByName(name);
-        if(searchedBeer.isEmpty()){
+        if (searchedBeer.isEmpty()) {
             throw new BeerNotFoundException(name);
         }
         return searchedBeer;
     }
 
-    public List<Beer> findAll(){
-        return beerRepository.findAll().stream()
-            .collect(Collectors.toList());
+    public void checkIfExistsABeerById(long id) throws BeerNotFoundException{
+        Optional<Beer> beer = beerRepository.findById(id);
+            if(beer.isEmpty()){
+                throw new BeerNotFoundException(id);
+            }
     }
-
 }

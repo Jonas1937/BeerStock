@@ -8,11 +8,11 @@ import javax.validation.Valid;
 import com.jonas.testebeer.entity.Beer;
 import com.jonas.testebeer.exceptions.BeerAlreadyInDatabaseException;
 import com.jonas.testebeer.exceptions.BeerNotFoundException;
-import com.jonas.testebeer.repository.BeerRepository;
 import com.jonas.testebeer.services.BeerServices;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,5 +42,12 @@ public class BeerController {
     public Optional<Beer> searchBeerByName(@PathVariable String name) throws BeerNotFoundException{
         return beerServices.searchBeerFromName(name);
     }
+
+    @DeleteMapping("/delete/{id}")
+    public String deleteBeerById(@PathVariable int id) throws BeerNotFoundException{
+        beerServices.deleteBeerById(id);
+        return "Beer sucessfull deleted";
+    }
+
 
 }
